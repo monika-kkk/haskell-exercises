@@ -1,5 +1,5 @@
 module BinaryTree where
-data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Eq, Show)
+data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Eq, Ord)
 
 insert :: (Ord a)  => a -> Tree a -> Tree a
 insert x Empty = Node x Empty Empty
@@ -109,4 +109,30 @@ insertList tree (h:t) = insertList (insert h tree) t
 testTree = insert 3 $ insert 7 $ insert 5 $ insert 1 $ insert 2 $ insert 2 $ insert 4 Empty
 -- testTree' = insert 8 $ insert 2 $ insert 1 $ insert 1 $ insert 12 $ insert 7 $ insert 4 Empty
 
+--------------------------------LAB3--------------------------------
 
+instance (Show a, Eq a) =>  Show (Tree a) where
+    show Empty = "Empty"
+    show (Node a left right)
+        | left == Empty && right == Empty = typeValue' ++ s ++ show left ++ s ++ show right
+        | left == Empty = typeValue' ++ s ++ right'
+        | right == Empty = typeValue' ++ s ++ left'
+        | otherwise = typeValue' ++ s ++ left' ++ s ++ right'
+        where typeValue' = "Node " ++ show a
+              left' = "(" ++ show left ++ ")"
+              right' = "(" ++ show right ++ ")"
+              s = " "
+
+-- Node 4 (Node 2 (Node 1 Empty Empty) (Node 2 Empty (Node 3 Empty Empty))) (Node 5 Empty (Node 7 Empty Empty))"
+
+data STree a = SEmpty | SLeaf a | SBranch a (STree a) (STree a) deriving Show
+
+convertToSTree :: Tree a -> STree a
+convertToSTree Empty = SEmpty
+convertToSTree (Node a Empty Empty) = SLeaf a
+convertToSTree (Node a left right) = SBranch a (convertToSTree left) (convertToSTree right)
+
+convertToTree :: STree a -> Tree a
+convertToTree SEmpty = Empty
+convertToTree (SLeaf a) = Node a Empty Empty
+convertToTree (SBranch a left right) = Node a (convertToTree left) (convertToTree right)
